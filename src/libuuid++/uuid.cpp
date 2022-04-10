@@ -21,8 +21,6 @@ namespace UUID {
     }
 
     uuid::uuid(std::string_view str) {
-        // Clear the UUID first so that it is null if parsing fails.
-        clear();
         parse(str);
     }
 
@@ -68,8 +66,17 @@ namespace UUID {
     }
 
     auto uuid::parse(std::string_view str) -> void {
-        uuid_parse_range(str.data(), str.end(), value);
-        str.copy(buffer, str.size());
+        if (uuid_parse_range(str.data(), str.end(), value) == 0) {
+            // Use the 'unparse' function instead of copying the input string
+            // in order to keep the string representations consistent.
+            // If the input string contains uppercase letters, but default
+            // behavior is to use lowercase letters, then we want this instance
+            // to contain the lowercased representation.
+            unparse();
+        }
+        // If parsing fails, clear this instance so that it will be equal to
+        // the NULL UUID.
+        else clear();
     }
 
     auto uuid::string() const -> std::string_view {
