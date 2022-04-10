@@ -91,4 +91,8 @@ namespace UUID {
         static auto instance = create_null_uuid();
         return instance;
     }
+
+    auto operator<<(std::ostream& os, const UUID::uuid& uu) -> std::ostream& {
+        return os << uu.string();
+    }
 }

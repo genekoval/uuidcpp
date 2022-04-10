@@ -40,3 +40,11 @@ TEST(UUIDTest, Parse) {
     ASSERT_TRUE(uuid);
     ASSERT_EQ(uuid1, uuid);
 }
+
+TEST(UUIDTest, Stream) {
+    auto os = std::ostringstream();
+    os << uuid1;
+    const auto result = os.str();
+
+    ASSERT_EQ(string, result);
+}

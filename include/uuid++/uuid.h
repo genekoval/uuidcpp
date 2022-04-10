@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ostream>
 #include <string_view>
 #include <uuid/uuid.h>
 
@@ -76,4 +77,6 @@ namespace UUID {
      * Returns a UUID instance equal to the NULL UUID.
      */
     auto null() -> const uuid&;
+
+    auto operator<<(std::ostream& os, const uuid& uu) -> std::ostream&;
 }
