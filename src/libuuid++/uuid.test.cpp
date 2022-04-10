@@ -9,11 +9,12 @@ namespace {
     const auto uuid2 = UUID::uuid("07e32d65-8aae-4a2f-8991-43644604b5d7");
 }
 
-TEST(UUIDTest, Comparison) {
-    ASSERT_EQ(uuid1, uuid1);
-    ASSERT_EQ(uuid1, UUID::uuid(string));
-    ASSERT_NE(uuid1, uuid2);
-    ASSERT_TRUE(uuid2 < uuid1);
+TEST(UUIDTest, Assignment) {
+    auto uuid = UUID::null();
+    ASSERT_TRUE(uuid.is_null());
+
+    uuid = uuid1;
+    ASSERT_EQ(uuid1, uuid);
 }
 
 TEST(UUIDTest, Bool) {
@@ -21,9 +22,21 @@ TEST(UUIDTest, Bool) {
     ASSERT_FALSE(UUID::null());
 }
 
-TEST(UUIDTest, ParseFailure) {
+TEST(UUIDTest, Comparison) {
+    ASSERT_EQ(uuid1, uuid1);
+    ASSERT_EQ(uuid1, UUID::uuid(string));
+    ASSERT_NE(uuid1, uuid2);
+    ASSERT_TRUE(uuid2 < uuid1);
+}
+
+TEST(UUIDTest, Parse) {
     ASSERT_FALSE(UUID::uuid("hello"));
 
     const auto str = std::string(string) + "2";
     ASSERT_FALSE(UUID::uuid(str));
+
+    const auto substr = str.substr(0, str.size() - 1);
+    const auto uuid = UUID::uuid(substr);
+    ASSERT_TRUE(uuid);
+    ASSERT_EQ(uuid1, uuid);
 }
