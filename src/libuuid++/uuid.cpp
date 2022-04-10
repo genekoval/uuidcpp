@@ -3,12 +3,18 @@
 #include <cstring>
 
 namespace UUID {
-    uuid::uuid(const uuid& obj) {
-        uuid_copy(value, obj.value);
+    uuid::uuid() {
+        generate();
+    }
+
+    uuid::uuid(const uuid& other) {
+        uuid_copy(value, other.value);
         unparse();
     }
 
-    uuid::uuid(const char* str) { parse(str); }
+    uuid::uuid(std::string_view str) {
+        parse(str);
+    }
 
     auto uuid::operator=(const char* str) -> uuid& {
         parse(str);
@@ -25,14 +31,20 @@ namespace UUID {
         unparse();
     }
 
-    auto uuid::is_null() const -> bool { return uuid_is_null(value) == 1; }
-
-    auto uuid::parse(const char* str) -> void {
-        uuid_parse(str, value);
-        std::strcpy(str_buffer, str);
+    auto uuid::is_null() const -> bool {
+        return uuid_is_null(value) == 1;
     }
 
-    auto uuid::string() const -> const char* { return str_buffer; }
+    auto uuid::parse(std::string_view str) -> void {
+        uuid_parse_range(str.data(), str.end() - 1, value);
+        str.copy(buffer, str.size());
+    }
 
-    auto uuid::unparse() -> void { uuid_unparse(value, str_buffer); }
+    auto uuid::string() const -> std::string_view {
+        return buffer;
+    }
+
+    auto uuid::unparse() -> void {
+        uuid_unparse(value, buffer);
+    }
 }

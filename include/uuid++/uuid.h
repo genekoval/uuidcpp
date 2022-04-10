@@ -1,28 +1,33 @@
 #pragma once
 
+#include <string_view>
 #include <uuid/uuid.h>
 
 namespace UUID {
     class uuid {
         /**
          * The length of a UUID's string representation.
-         *
-         * Consists of:
-         *      32 hex digits
-         *      4 hyphens
-         *      1 terminating null character
          */
-        static constexpr auto uuid_len = 37;
+        static constexpr auto uuid_len =
+            32 + // hex digits
+            4 + // hyphens
+            1; // terminating null character
 
-        char str_buffer[uuid_len];
+        /**
+         * Storage for the UUID's string representation.
+         */
+        char buffer[uuid_len];
         uuid_t value;
 
-        auto parse(const char* str) -> void;
+        auto parse(std::string_view str) -> void;
+
         auto unparse() -> void;
     public:
-        uuid() = default;
-        uuid(const uuid& obj);
-        uuid(const char* str);
+        uuid();
+
+        uuid(const uuid& other);
+
+        uuid(std::string_view str);
 
         auto operator=(const char* str) -> uuid&;
 
@@ -32,6 +37,6 @@ namespace UUID {
 
         auto is_null() const -> bool;
 
-        auto string() const -> const char*;
+        auto string() const -> std::string_view;
     };
 }
