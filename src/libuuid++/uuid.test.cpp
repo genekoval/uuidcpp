@@ -22,11 +22,21 @@ TEST(UUIDTest, Bool) {
     ASSERT_FALSE(UUID::null());
 }
 
+TEST(UUIDTest, Bytes) {
+    const auto bytes = uuid1.bytes();
+    ASSERT_EQ(UUID::size, bytes.size());
+
+    const auto uuid = UUID::uuid(bytes);
+    ASSERT_EQ(uuid1, uuid);
+}
+
 TEST(UUIDTest, Comparison) {
     ASSERT_EQ(uuid1, uuid1);
     ASSERT_EQ(uuid1, UUID::uuid(string));
     ASSERT_NE(uuid1, uuid2);
+
     ASSERT_TRUE(uuid2 < uuid1);
+    ASSERT_TRUE(UUID::null() < uuid2);
 }
 
 TEST(UUIDTest, Parse) {
@@ -47,4 +57,8 @@ TEST(UUIDTest, Stream) {
     const auto result = os.str();
 
     ASSERT_EQ(string, result);
+}
+
+TEST(UUIDTest, String) {
+    ASSERT_EQ(string, uuid1.string());
 }

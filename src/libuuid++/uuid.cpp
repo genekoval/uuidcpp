@@ -1,7 +1,5 @@
 #include <uuid++/uuid.h>
 
-#include <cstring>
-
 namespace {
     auto create_null_uuid() -> UUID::uuid {
         uuid_t result;
@@ -15,17 +13,19 @@ namespace UUID {
         generate();
     }
 
-    uuid::uuid(const uuid& other) {
-        uuid_copy(value, other.value);
-        unparse();
-    }
-
     uuid::uuid(std::string_view str) {
         parse(str);
     }
 
-    uuid::uuid(uuid_t value) {
+    uuid::uuid(const unsigned char* value) {
         uuid_copy(this->value, value);
+        unparse();
+    }
+
+    uuid::uuid(std::span<const unsigned char> bytes) : uuid(bytes.data()) {}
+
+    uuid::uuid(const uuid& other) {
+        uuid_copy(value, other.value);
         unparse();
     }
 
@@ -49,6 +49,10 @@ namespace UUID {
 
     uuid::operator bool() const noexcept {
         return !is_null();
+    }
+
+    auto uuid::bytes() const -> std::span<const unsigned char> {
+        return value;
     }
 
     auto uuid::clear() -> void {

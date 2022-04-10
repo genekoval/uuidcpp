@@ -1,10 +1,16 @@
 #pragma once
 
 #include <ostream>
+#include <span>
 #include <string_view>
 #include <uuid/uuid.h>
 
 namespace UUID {
+    /**
+     * Number of bytes in a UUID's binary representation.
+     */
+    constexpr auto size = sizeof(uuid_t);
+
     class uuid {
         /**
          * The length of a UUID's string representation.
@@ -40,11 +46,16 @@ namespace UUID {
         uuid();
 
         /**
-         * Creates a copy of the given UUID.
+         * Initializes a new UUID instance by using the value represented by
+         * the specified array of bytes.
          */
-        uuid(const uuid& other);
+        explicit uuid(const unsigned char* value);
 
-        uuid(uuid_t value);
+        /**
+         * Initializes a new UUID instance by using the value represented by
+         * the specified read-only span of bytes.
+         */
+        explicit uuid(std::span<const unsigned char> bytes);
 
         /**
          * Converts the given string into the binary representation.
@@ -54,13 +65,26 @@ namespace UUID {
          */
         uuid(std::string_view str);
 
+        /**
+         * Creates a copy of the given UUID.
+         */
+        uuid(const uuid& other);
+
         auto operator=(const char* str) -> uuid&;
 
         auto operator==(const uuid& other) const -> bool;
 
         auto operator<=>(const uuid& other) const -> std::strong_ordering;
 
+        /**
+         * Returns false if *this is equal to the NULL UUID, true otherwise.
+         */
         explicit operator bool() const noexcept;
+
+        /**
+         * Returns the UUID as bytes.
+         */
+        auto bytes() const -> std::span<const unsigned char>;
 
         /**
          * Compares the value of this UUID to the NULL value.
@@ -70,6 +94,10 @@ namespace UUID {
          */
         auto is_null() const -> bool;
 
+        /**
+         * Returns a string created from the UUID,
+         * such as "d8875077-b44c-4be5-9de4-1234130702ce".
+         */
         auto string() const -> std::string_view;
     };
 
