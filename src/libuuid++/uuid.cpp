@@ -2,6 +2,14 @@
 
 #include <cstring>
 
+namespace {
+    auto create_null_uuid() -> UUID::uuid {
+        uuid_t result;
+        uuid_clear(result);
+        return UUID::uuid(result);
+    }
+}
+
 namespace UUID {
     uuid::uuid() {
         generate();
@@ -13,12 +21,36 @@ namespace UUID {
     }
 
     uuid::uuid(std::string_view str) {
+        // Clear the UUID first so that it is null if parsing fails.
+        clear();
         parse(str);
+    }
+
+    uuid::uuid(uuid_t value) {
+        uuid_copy(this->value, value);
+        unparse();
     }
 
     auto uuid::operator=(const char* str) -> uuid& {
         parse(str);
         return *this;
+    }
+
+    auto uuid::operator==(const uuid& other) const -> bool {
+        return uuid_compare(value, other.value) == 0;
+    }
+
+    auto uuid::operator<=>(const uuid& other) const -> std::strong_ordering {
+        const auto result = uuid_compare(value, other.value);
+
+        if (result < 0) return std::strong_ordering::less;
+        if (result > 0) return std::strong_ordering::greater;
+
+        return std::strong_ordering::equal;
+    }
+
+    uuid::operator bool() const noexcept {
+        return !is_null();
     }
 
     auto uuid::clear() -> void {
@@ -36,7 +68,7 @@ namespace UUID {
     }
 
     auto uuid::parse(std::string_view str) -> void {
-        uuid_parse_range(str.data(), str.end() - 1, value);
+        uuid_parse_range(str.data(), str.end(), value);
         str.copy(buffer, str.size());
     }
 
@@ -46,5 +78,10 @@ namespace UUID {
 
     auto uuid::unparse() -> void {
         uuid_unparse(value, buffer);
+    }
+
+    auto null() -> const uuid& {
+        static auto instance = create_null_uuid();
+        return instance;
     }
 }
