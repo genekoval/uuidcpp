@@ -2,8 +2,10 @@
 
 #include <gtest/gtest.h>
 
+using namespace std::literals;
+
 namespace {
-    constexpr auto string = "cbb3c3d4-a822-4380-a98a-923473870992";
+    constexpr auto string = "cbb3c3d4-a822-4380-a98a-923473870992"sv;
 
     const auto uuid1 = UUID::uuid(string);
     const auto uuid2 = UUID::uuid("07e32d65-8aae-4a2f-8991-43644604b5d7");
@@ -37,6 +39,11 @@ TEST(UUIDTest, Comparison) {
 
     ASSERT_TRUE(uuid2 < uuid1);
     ASSERT_TRUE(UUID::null() < uuid2);
+}
+
+TEST(UUIDTest, Default) {
+    const auto uuid = UUID::uuid();
+    ASSERT_TRUE(uuid.is_null());
 }
 
 TEST(UUIDTest, Parse) {

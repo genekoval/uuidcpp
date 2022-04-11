@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <ostream>
 #include <span>
 #include <string_view>
@@ -15,7 +16,7 @@ namespace UUID {
         /**
          * The length of a UUID's string representation.
          */
-        static constexpr auto uuid_len =
+        static constexpr auto str_len =
             32 + // hex digits
             4 + // hyphens
             1; // terminating null character
@@ -23,7 +24,11 @@ namespace UUID {
         /**
          * Storage for the UUID's string representation.
          */
-        char buffer[uuid_len];
+        std::array<char, str_len> str;
+
+        /**
+         * Storage for the UUID's binary representation.
+         */
         uuid_t value;
 
         /**

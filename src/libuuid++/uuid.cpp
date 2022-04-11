@@ -9,9 +9,7 @@ namespace {
 }
 
 namespace UUID {
-    uuid::uuid() {
-        generate();
-    }
+    uuid::uuid() : uuid(null()) {}
 
     uuid::uuid(std::string_view str) {
         parse(str);
@@ -26,7 +24,7 @@ namespace UUID {
 
     uuid::uuid(const uuid& other) {
         uuid_copy(value, other.value);
-        unparse();
+        str = other.str;
     }
 
     auto uuid::operator=(const char* str) -> uuid& {
@@ -84,11 +82,12 @@ namespace UUID {
     }
 
     auto uuid::string() const -> std::string_view {
-        return buffer;
+        // Do not include the terminating null character.
+        return std::string_view(str.data(), str.size() - 1);
     }
 
     auto uuid::unparse() -> void {
-        uuid_unparse(value, buffer);
+        uuid_unparse(value, str.data());
     }
 
     auto null() -> const uuid& {
