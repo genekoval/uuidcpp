@@ -52,10 +52,28 @@ TEST(UUIDTest, Generate) {
 }
 
 TEST(UUIDTest, Parse) {
-    ASSERT_FALSE(UUID::uuid("hello"));
+    try {
+        [[maybe_unused]]
+        const auto uuid = UUID::uuid("hello");
+        FAIL() << "invalid conversion";
+    }
+    catch (const UUID::parse_error& ex) {
+        ASSERT_EQ("invalid UUID: hello"sv, std::string_view(ex.what()));
+    }
 
     const auto str = std::string(string) + "2";
-    ASSERT_FALSE(UUID::uuid(str));
+
+    try {
+        [[maybe_unused]]
+        const auto uuid = UUID::uuid(str);
+        FAIL() << "invalid conversion";
+    }
+    catch (const UUID::parse_error& ex) {
+        ASSERT_EQ(
+            "invalid UUID: cbb3c3d4-a822-4380-a98a-9234738709922"sv,
+            std::string_view(ex.what())
+        );
+    }
 
     const auto substr = str.substr(0, str.size() - 1);
     const auto uuid = UUID::uuid(substr);

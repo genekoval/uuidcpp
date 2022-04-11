@@ -68,8 +68,7 @@ namespace UUID {
         /**
          * Converts the given string into the binary representation.
          *
-         * If the input is an invalid UUID, the resulting instance will be equal
-         * to the NULL UUID.
+         * Throws a parse_error if parsing the string fails.
          */
         uuid(std::string_view str);
 
@@ -109,6 +108,10 @@ namespace UUID {
          * such as "d8875077-b44c-4be5-9de4-1234130702ce".
          */
         auto string() const -> std::string_view;
+    };
+
+    class parse_error : public std::runtime_error {
+        using std::runtime_error::runtime_error;
     };
 
     /**

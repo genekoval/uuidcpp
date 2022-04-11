@@ -1,5 +1,7 @@
 #include <uuid++/uuid.h>
 
+#include <sstream>
+
 namespace {
     auto create_null_uuid() -> UUID::uuid {
         uuid_t result;
@@ -77,9 +79,15 @@ namespace UUID {
             // to contain the lowercased representation.
             unparse();
         }
-        // If parsing fails, clear this instance so that it will be equal to
-        // the NULL UUID.
-        else clear();
+        else {
+            // If parsing fails, clear this instance so that it will be equal to
+            // the NULL UUID.
+            clear();
+
+            auto os = std::ostringstream();
+            os << "invalid UUID: " << str;
+            throw parse_error(os.str());
+        }
     }
 
     auto uuid::string() const -> std::string_view {
