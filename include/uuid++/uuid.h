@@ -36,11 +36,6 @@ namespace UUID {
          */
         auto clear() -> void;
 
-        /**
-         * Creates a new UUID and assigns it to this instance.
-         */
-        auto generate() -> void;
-
         auto parse(std::string_view str) -> void;
 
         auto unparse() -> void;
@@ -105,6 +100,11 @@ namespace UUID {
          */
         auto string() const -> std::string_view;
     };
+
+    /**
+     * Returns a new randomly generated UUID.
+     */
+    auto generate() -> uuid;
 
     /**
      * Returns a UUID instance equal to the NULL UUID.

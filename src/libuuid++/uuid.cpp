@@ -58,11 +58,6 @@ namespace UUID {
         unparse();
     }
 
-    auto uuid::generate() -> void {
-        uuid_generate(value);
-        unparse();
-    }
-
     auto uuid::is_null() const -> bool {
         return uuid_is_null(value) == 1;
     }
@@ -97,5 +92,11 @@ namespace UUID {
 
     auto operator<<(std::ostream& os, const UUID::uuid& uu) -> std::ostream& {
         return os << uu.string();
+    }
+
+    auto generate() -> uuid {
+        uuid_t value;
+        uuid_generate(value);
+        return uuid(value);
     }
 }

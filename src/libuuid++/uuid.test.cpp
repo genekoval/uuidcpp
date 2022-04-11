@@ -46,6 +46,11 @@ TEST(UUIDTest, Default) {
     ASSERT_TRUE(uuid.is_null());
 }
 
+TEST(UUIDTest, Generate) {
+    const auto uuid = UUID::generate();
+    ASSERT_FALSE(uuid.is_null());
+}
+
 TEST(UUIDTest, Parse) {
     ASSERT_FALSE(UUID::uuid("hello"));
 
