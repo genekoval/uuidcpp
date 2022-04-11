@@ -12,19 +12,19 @@ namespace UUID {
      */
     constexpr auto size = sizeof(uuid_t);
 
-    class uuid {
-        /**
-         * The length of a UUID's string representation.
-         */
-        static constexpr auto str_len =
+    /**
+     * The length of a UUID's string representation.
+     */
+    constexpr auto strlen =
             32 + // hex digits
             4 + // hyphens
             1; // terminating null character
 
+    class uuid {
         /**
          * Storage for the UUID's string representation.
          */
-        std::array<char, str_len> str;
+        std::array<char, strlen> str;
 
         /**
          * Storage for the UUID's binary representation.
@@ -58,6 +58,14 @@ namespace UUID {
         explicit uuid(std::span<const unsigned char> bytes);
 
         /**
+         * Converts the given character array into the binary representation.
+         *
+         * If the input is an invalid UUID, the resulting instance will be equal
+         * to the NULL UUID.
+         */
+        uuid(const char* str);
+
+        /**
          * Converts the given string into the binary representation.
          *
          * If the input is an invalid UUID, the resulting instance will be equal
@@ -80,6 +88,8 @@ namespace UUID {
          * Returns false if *this is equal to the NULL UUID, true otherwise.
          */
         explicit operator bool() const noexcept;
+
+        operator std::string_view() const noexcept;
 
         /**
          * Returns the UUID as bytes.

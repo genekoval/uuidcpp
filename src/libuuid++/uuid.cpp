@@ -11,6 +11,8 @@ namespace {
 namespace UUID {
     uuid::uuid() : uuid(null()) {}
 
+    uuid::uuid(const char* str) : uuid(std::string_view(str)) {}
+
     uuid::uuid(std::string_view str) {
         parse(str);
     }
@@ -47,6 +49,10 @@ namespace UUID {
 
     uuid::operator bool() const noexcept {
         return !is_null();
+    }
+
+    uuid::operator std::string_view() const noexcept {
+        return string();
     }
 
     auto uuid::bytes() const -> std::span<const unsigned char> {
