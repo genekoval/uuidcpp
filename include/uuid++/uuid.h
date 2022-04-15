@@ -70,7 +70,7 @@ namespace UUID {
          *
          * Throws a parse_error if parsing the string fails.
          */
-        uuid(std::string_view str);
+        explicit uuid(std::string_view str);
 
         /**
          * Creates a copy of the given UUID.
