@@ -114,3 +114,11 @@ namespace UUID {
         return uuid(value);
     }
 }
+
+namespace std {
+    auto hash<UUID::uuid>::operator()(
+        const UUID::uuid& uuid
+    ) const noexcept -> size_t {
+        return hash<std::string_view>{}(uuid.string());
+    }
+}

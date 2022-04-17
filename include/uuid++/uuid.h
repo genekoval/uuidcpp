@@ -126,3 +126,10 @@ namespace UUID {
 
     auto operator<<(std::ostream& os, const uuid& uu) -> std::ostream&;
 }
+
+namespace std {
+    template <>
+    struct hash<UUID::uuid> {
+        auto operator()(const UUID::uuid& uuid) const noexcept -> size_t;
+    };
+}
