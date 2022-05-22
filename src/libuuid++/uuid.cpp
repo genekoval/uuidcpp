@@ -113,6 +113,15 @@ namespace UUID {
         uuid_generate(value);
         return uuid(value);
     }
+
+    auto parse(std::string_view str) -> std::optional<uuid> {
+        try {
+            return uuid(str);
+        }
+        catch (const parse_error& ex) {
+            return {};
+        }
+    }
 }
 
 namespace std {

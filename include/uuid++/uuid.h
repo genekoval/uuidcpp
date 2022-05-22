@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <optional>
 #include <ostream>
 #include <span>
 #include <string_view>
@@ -125,6 +126,8 @@ namespace UUID {
     auto null() -> const uuid&;
 
     auto operator<<(std::ostream& os, const uuid& uu) -> std::ostream&;
+
+    auto parse(std::string_view str) -> std::optional<uuid>;
 }
 
 namespace std {

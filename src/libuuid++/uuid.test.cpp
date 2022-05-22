@@ -81,6 +81,17 @@ TEST(UUIDTest, Parse) {
     ASSERT_EQ(uuid1, uuid);
 }
 
+TEST(UUIDTest, TryParse) {
+    constexpr auto str = "uuid"sv;
+
+    auto opt = UUID::parse(string);
+    ASSERT_TRUE(opt.has_value());
+    ASSERT_EQ(uuid1, opt.value());
+
+    opt = UUID::parse(str);
+    ASSERT_FALSE(opt.has_value());
+}
+
 TEST(UUIDTest, Stream) {
     auto os = std::ostringstream();
     os << uuid1;
