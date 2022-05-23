@@ -1,3 +1,5 @@
+#pragma once
+
 #include <uuid++/uuid++>
 #include <zipline/zipline>
 
