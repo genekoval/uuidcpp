@@ -14,6 +14,8 @@ $(library).libs := uuid
 test.libs := $(project) gtest gtest_main
 test.deps := $(library)
 
+install.directories = $(include)/$(project)
+
 files = $(include) $(src) Makefile VERSION
 
 include mkbuild/base.mk
