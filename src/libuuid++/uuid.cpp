@@ -1,34 +1,40 @@
 #include <uuid++/uuid.h>
 
+#include <fmt/core.h>
 #include <sstream>
-
-namespace {
-    auto create_null_uuid() -> UUID::uuid {
-        uuid_t result;
-        uuid_clear(result);
-        return UUID::uuid(result);
-    }
-}
+#include <uuid/uuid.h>
 
 namespace UUID {
     uuid::uuid() : uuid(null()) {}
 
-    uuid::uuid(const char* str) : uuid(std::string_view(str)) {}
-
-    uuid::uuid(std::string_view str) {
-        parse(str);
-    }
-
     uuid::uuid(const unsigned char* value) {
-        uuid_copy(this->value, value);
-        unparse();
+        uuid_copy(this->value.data(), value);
+        uuid_unparse_lower(this->value.data(), str.data());
     }
 
     uuid::uuid(std::span<const unsigned char> bytes) : uuid(bytes.data()) {}
 
+    uuid::uuid(const char* str) : uuid(std::string_view(str)) {}
+
+    uuid::uuid(std::string_view str) {
+        if (str.size() != strlen - 1) throw parse_error(str);
+
+        for (auto i = 0u; i < str.size(); ++i) {
+            this->str[i] = std::tolower(str[i]);
+        }
+
+        this->str[str.size()] = '\0';
+
+        const auto* data = this->str.data();
+
+        if (uuid_parse_range(data, data + str.size(), value.data()) != 0) {
+            throw parse_error(str);
+        }
+    }
+
     uuid::uuid(const uuid& other) {
-        uuid_copy(value, other.value);
-        str = other.str;
+        std::memcpy(value.data(), other.value.data(), size);
+        std::memcpy(str.data(), other.str.data(), strlen);
     }
 
     auto uuid::operator=(const char* str) -> uuid& {
@@ -37,11 +43,11 @@ namespace UUID {
     }
 
     auto uuid::operator==(const uuid& other) const -> bool {
-        return uuid_compare(value, other.value) == 0;
+        return uuid_compare(value.data(), other.value.data()) == 0;
     }
 
     auto uuid::operator<=>(const uuid& other) const -> std::strong_ordering {
-        const auto result = uuid_compare(value, other.value);
+        const auto result = uuid_compare(value.data(), other.value.data());
 
         if (result < 0) return std::strong_ordering::less;
         if (result > 0) return std::strong_ordering::greater;
@@ -61,33 +67,8 @@ namespace UUID {
         return value;
     }
 
-    auto uuid::clear() -> void {
-        uuid_clear(value);
-        unparse();
-    }
-
     auto uuid::is_null() const -> bool {
-        return uuid_is_null(value) == 1;
-    }
-
-    auto uuid::parse(std::string_view str) -> void {
-        if (uuid_parse_range(str.data(), str.end(), value) == 0) {
-            // Use the 'unparse' function instead of copying the input string
-            // in order to keep the string representations consistent.
-            // If the input string contains uppercase letters, but default
-            // behavior is to use lowercase letters, then we want this instance
-            // to contain the lowercased representation.
-            unparse();
-        }
-        else {
-            // If parsing fails, clear this instance so that it will be equal to
-            // the NULL UUID.
-            clear();
-
-            auto os = std::ostringstream();
-            os << "invalid UUID: " << str;
-            throw parse_error(os.str());
-        }
+        return uuid_is_null(value.data()) == 1;
     }
 
     auto uuid::string() const -> std::string_view {
@@ -95,12 +76,17 @@ namespace UUID {
         return std::string_view(str.data(), str.size() - 1);
     }
 
-    auto uuid::unparse() -> void {
-        uuid_unparse(value, str.data());
-    }
+    parse_error::parse_error(std::string_view str) :
+        runtime_error(fmt::format("invalid UUID: {}", str))
+    {}
 
     auto null() -> const uuid& {
-        static auto instance = create_null_uuid();
+        static const auto instance = [] {
+            auto value = std::array<unsigned char, size>();
+            uuid_clear(value.data());
+            return uuid(value);
+        }();
+
         return instance;
     }
 

@@ -5,19 +5,18 @@
 #include <ostream>
 #include <span>
 #include <string_view>
-#include <uuid/uuid.h>
 
 namespace UUID {
     /**
      * Number of bytes in a UUID's binary representation.
      */
-    constexpr auto size = sizeof(uuid_t);
+    constexpr auto size = std::size_t(16);
 
     /**
      * The length of a UUID's string representation.
      */
     constexpr auto strlen =
-            32 + // hex digits
+            size * 2 + // hex digits
             4 + // hyphens
             1; // terminating null character
 
@@ -30,19 +29,10 @@ namespace UUID {
         /**
          * Storage for the UUID's binary representation.
          */
-        uuid_t value;
-
-        /**
-         * Resets the value of this UUID to the NULL value.
-         */
-        auto clear() -> void;
-
-        auto parse(std::string_view str) -> void;
-
-        auto unparse() -> void;
+        std::array<unsigned char, size> value;
     public:
         /**
-         * Initializes a new UUID with a randomly generated value.
+         * Initializes a new UUID equal to the NULL UUID.
          */
         uuid();
 
@@ -64,7 +54,7 @@ namespace UUID {
          * If the input is an invalid UUID, the resulting instance will be equal
          * to the NULL UUID.
          */
-        uuid(const char* str);
+        explicit uuid(const char* str);
 
         /**
          * Converts the given string into the binary representation.
@@ -111,8 +101,8 @@ namespace UUID {
         auto string() const -> std::string_view;
     };
 
-    class parse_error : public std::runtime_error {
-        using std::runtime_error::runtime_error;
+    struct parse_error : std::runtime_error {
+        parse_error(std::string_view str);
     };
 
     /**

@@ -61,7 +61,7 @@ TEST(UUIDTest, Parse) {
         ASSERT_EQ("invalid UUID: hello"sv, std::string_view(ex.what()));
     }
 
-    const auto str = std::string(string) + "2";
+    const auto str = std::string(string) + "*";
 
     try {
         [[maybe_unused]]
@@ -70,12 +70,14 @@ TEST(UUIDTest, Parse) {
     }
     catch (const UUID::parse_error& ex) {
         ASSERT_EQ(
-            "invalid UUID: cbb3c3d4-a822-4380-a98a-9234738709922"sv,
+            "invalid UUID: cbb3c3d4-a822-4380-a98a-923473870992*"sv,
             std::string_view(ex.what())
         );
     }
 
-    const auto substr = str.substr(0, str.size() - 1);
+    // Test if parsing works for non-null terminated strings.
+    const auto view = std::string_view(str);
+    const auto substr = view.substr(0, view.size() - 1);
     const auto uuid = UUID::uuid(substr);
     ASSERT_TRUE(uuid);
     ASSERT_EQ(uuid1, uuid);

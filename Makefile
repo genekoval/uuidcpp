@@ -9,7 +9,7 @@ install := $(library)
 targets := $(install)
 
 $(library).type := shared
-$(library).libs := uuid
+$(library).libs := fmt uuid
 
 test.libs := $(project) gtest gtest_main
 test.deps := $(library)
