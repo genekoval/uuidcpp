@@ -54,7 +54,7 @@ namespace UUID {
          * If the input is an invalid UUID, the resulting instance will be equal
          * to the NULL UUID.
          */
-        explicit uuid(const char* str);
+        uuid(const char* str);
 
         /**
          * Converts the given string into the binary representation.
