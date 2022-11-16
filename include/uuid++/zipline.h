@@ -5,16 +5,25 @@
 
 namespace zipline {
     template <typename Socket>
-    struct transfer<Socket, UUID::uuid> {
-        static auto read(Socket& socket) -> UUID::uuid {
+    struct coder<Socket, UUID::uuid> {
+        static auto decode(Socket& socket) -> ext::task<UUID::uuid> {
             auto bytes = std::array<unsigned char, UUID::size>();
-            socket.read(bytes.data(), bytes.size());
-            return UUID::uuid(bytes);
+            co_await socket.read(bytes.data(), bytes.size());
+
+            const auto uuid = UUID::uuid(bytes);
+            TIMBER_TRACE("decode uuid: {}", uuid);
+
+            co_return uuid;
         }
 
-        static auto write(Socket& socket, const UUID::uuid& uuid) -> void {
+        static auto encode(
+            Socket& socket,
+            const UUID::uuid& uuid
+        ) -> ext::task<> {
+            TIMBER_TRACE("encode uuid: {}", uuid);
+
             const auto bytes = uuid.bytes();
-            socket.write(bytes.data(), bytes.size());
+            co_await socket.write(bytes.data(), bytes.size());
         }
     };
 }
