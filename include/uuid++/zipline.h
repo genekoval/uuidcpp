@@ -19,10 +19,8 @@ namespace zipline {
 
     template <io::writer Writer>
     struct encoder<UUID::uuid, Writer> {
-        static auto encode(
-            const UUID::uuid& uuid,
-            Writer& writer
-        ) -> ext::task<> {
+        static auto encode(const UUID::uuid& uuid, Writer& writer)
+            -> ext::task<> {
             TIMBER_TRACE("encode uuid: {}", uuid);
 
             const auto bytes = uuid.bytes();

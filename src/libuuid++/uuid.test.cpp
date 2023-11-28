@@ -53,8 +53,7 @@ TEST(UUIDTest, Generate) {
 
 TEST(UUIDTest, Parse) {
     try {
-        [[maybe_unused]]
-        const auto uuid = UUID::uuid("hello");
+        [[maybe_unused]] const auto uuid = UUID::uuid("hello");
         FAIL() << "invalid conversion";
     }
     catch (const UUID::parse_error& ex) {
@@ -64,8 +63,7 @@ TEST(UUIDTest, Parse) {
     const auto str = std::string(string) + "*";
 
     try {
-        [[maybe_unused]]
-        const auto uuid = UUID::uuid(str);
+        [[maybe_unused]] const auto uuid = UUID::uuid(str);
         FAIL() << "invalid conversion";
     }
     catch (const UUID::parse_error& ex) {
@@ -102,6 +100,4 @@ TEST(UUIDTest, Stream) {
     ASSERT_EQ(string, result);
 }
 
-TEST(UUIDTest, String) {
-    ASSERT_EQ(string, uuid1.string());
-}
+TEST(UUIDTest, String) { ASSERT_EQ(string, uuid1.string()); }

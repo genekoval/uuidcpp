@@ -55,17 +55,11 @@ namespace UUID {
         return std::strong_ordering::equal;
     }
 
-    uuid::operator bool() const noexcept {
-        return !is_null();
-    }
+    uuid::operator bool() const noexcept { return !is_null(); }
 
-    uuid::operator std::string_view() const noexcept {
-        return string();
-    }
+    uuid::operator std::string_view() const noexcept { return string(); }
 
-    auto uuid::bytes() const -> std::span<const unsigned char> {
-        return value;
-    }
+    auto uuid::bytes() const -> std::span<const unsigned char> { return value; }
 
     auto uuid::is_null() const -> bool {
         return uuid_is_null(value.data()) == 1;
@@ -77,8 +71,7 @@ namespace UUID {
     }
 
     parse_error::parse_error(std::string_view str) :
-        runtime_error(fmt::format("invalid UUID: {}", str))
-    {}
+        runtime_error(fmt::format("invalid UUID: {}", str)) {}
 
     auto null() -> const uuid& {
         static const auto instance = [] {
@@ -111,9 +104,8 @@ namespace UUID {
 }
 
 namespace std {
-    auto hash<UUID::uuid>::operator()(
-        const UUID::uuid& uuid
-    ) const noexcept -> size_t {
-        return hash<std::string_view>{}(uuid.string());
+    auto hash<UUID::uuid>::operator()(const UUID::uuid& uuid) const noexcept
+        -> size_t {
+        return hash<std::string_view> {}(uuid.string());
     }
 }

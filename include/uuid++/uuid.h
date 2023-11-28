@@ -15,10 +15,9 @@ namespace UUID {
     /**
      * The length of a UUID's string representation.
      */
-    constexpr auto strlen =
-            size * 2 + // hex digits
-            4 + // hyphens
-            1; // terminating null character
+    constexpr auto strlen = size * 2 + // hex digits
+                            4 +        // hyphens
+                            1;         // terminating null character
 
     class uuid {
         /**
