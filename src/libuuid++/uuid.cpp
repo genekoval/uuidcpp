@@ -1,7 +1,6 @@
 #include <uuid++/uuid.h>
 
 #include <fmt/core.h>
-#include <sstream>
 #include <uuid/uuid.h>
 
 namespace UUID {
